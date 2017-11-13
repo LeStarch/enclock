@@ -60,4 +60,5 @@ body {
 
 input[type="text"] {
     width: 100%;
+    text-transform: none;
 }

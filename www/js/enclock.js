@@ -1,7 +1,7 @@
 var COUNTDOWN_STEP = 500;
-var COUNTDOWN_DURATION = 43200000;
+var COUNTDOWN_DURATION = 3600 * 1.5 * 1000;
 var INTERVAL_ID = null;
-var NOT_SECRET_ENCRYPTION_KEY = "FILL-ME";
+var NOT_SECRET_ENCRYPTION_KEY = null;
 /**
  * Clears the input boxes
  */
@@ -24,25 +24,30 @@ function addRecord() {
 function deleteRecord(e) {
     var key = e.target.getAttribute("key");
     window.localStorage.removeItem(key);
-    decrypt();
+    decrypt(null);
 }
 /**
  * Decrypt the password.
  */
-function decrypt() {
-    var button = document.getElementById("go-button");
-    button.classList.remove("btn-danger");
-    button.classList.add("btn-primary");
-    button.innerHTML = "Clear";
-    button.onclick = setup;
+function decrypt(button) {
+    if (button != null) {
+        button.classList.remove("btn-danger");
+        button.classList.add("btn-primary");
+        button.innerHTML = "Clear";
+        button.onclick = setup;
+    }
     //HTML to add
     var tbl = "<table class='table table-bordered table-striped'><tr><th>Key</th><th>Password</th><th></th></tr>";
     for (var key in window.localStorage) {
         var password = window.localStorage[key];
         try {
             password = sjcl.decrypt(NOT_SECRET_ENCRYPTION_KEY, password);
+            if (typeof(password) != "string") {
+                password = "error";
+            }
         } catch (e) {
             console.log("[ERROR] "+e);
+            password = "error";
         }
         tbl += "<tr><td>"+key+"</td><td>"+password+"</td>";
         tbl += "<td><button class='btn btn-danger delete-record' key='"+key+"'>X</button></td></tr>";
@@ -59,39 +64,49 @@ function decrypt() {
 /**
  * Update the button
  */
-function update(countdown) {
-    var button = document.getElementById("go-button");
+function update(countdown, button) {
     button.classList.remove("btn-success");
     button.classList.add("btn-danger");
-    button.innerHTML = "Decrypting... "+(countdown/1000).toFixed(2);
+    button.innerHTML = "Decrypting... "+(countdown/1000).toFixed(0);
 }
 /**
  * Start the decryption counter
+ * @param time: current external time
  */
-function start() {
+function start(begin) {
     //Ten hours
-    var countdown = COUNTDOWN_DURATION;
+    var end = begin + COUNTDOWN_DURATION;
     //Setup countdown function
-    var closure = function() {
-        countdown = countdown - COUNTDOWN_STEP;
-        update(countdown);
-        if (countdown <= 0) {
-            decrypt();
+    var closure = function(time) {
+        update(end - time, this);
+        if (time >= end) {
+            decrypt(this);
             clearInterval(INTERVAL_ID);
         }
     };
-    INTERVAL_ID = setInterval(closure, COUNTDOWN_STEP);
+    INTERVAL_ID = setInterval(get_external_time.bind(null, closure.bind(this), error), COUNTDOWN_STEP);
+}
+/**
+ * An error function to display an error
+ */
+function error(err) {
+    document.getElementById("derror").innerHTML =
+        "<em>Error:</em> Internet connection required for externally sourced time";
 }
 /**
  * A function designed to setup the encrypt button actions
  */
 function setup() {
+    if (typeof(window.localStorage["NOT_SECRET_ENCRYPTION_KEY"]) == "undefined" ) {
+        window.localStorage["NOT_SECRET_ENCRYPTION_KEY"] = new Date().getTime();
+    }
+    NOT_SECRET_ENCRYPTION_KEY = window.localStorage["NOT_SECRET_ENCRYPTION_KEY"];
     var button = document.getElementById("go-button");
     button.classList.remove("btn-primary");
     button.classList.remove("btn-danger");
     button.classList.add("btn-success");
     button.innerHTML = "Decrypt";
-    button.onclick = start;
+    button.onclick = get_external_time.bind(null, start.bind(button), error);
     var div = document.getElementById("display");
     div.innerHTML = "";
     //Setup add and clear buttons

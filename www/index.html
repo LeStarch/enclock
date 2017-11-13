@@ -19,7 +19,7 @@
 -->
 <html>
     <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com http://tycho.usno.navy.mil 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -41,6 +41,7 @@
                     </button>
                 </div>
             </div>
+            <div id="derror"></div>
             <!-- Add key modal -->
             <div id="modal-add" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -55,6 +56,7 @@
                                 <tr>
                                     <td><input type="text" id="key-input"></input></td>
                                     <td><input type="text" id="pass-input"></input></td>
+                                    <!--td><input type="number" id="time-input" value="60"></input></td-->
                                 </tr>
                             </table>
                         </div>
@@ -74,5 +76,6 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/enclock.js"></script>
+        <script type="text/javascript" src="js/time.js"></script>
     </body>
 </html>
