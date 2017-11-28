@@ -9,7 +9,6 @@
         M Starch
     </author>
     <content src="index.html" />
-    <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
     <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
@@ -25,4 +24,14 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
+    <icon src="res/icon.png" />
+    <platform name="android">
+        <icon density="mdpi" src="res/mipmap-mdpi/ic_flower.png" />
+        <icon density="hdpi" src="res/mipmap-hdpi/ic_flower.png" />
+        <icon density="xhdpi" src="res/mipmap-xhdpi/ic_flower.png" />
+        <icon density="xxhdpi" src="res/mipmap-xxhdpi/ic_flower.png" />
+        <icon density="xxxhdpi" src="res/mipmap-xxxhdpi/ic_flower.png" />
+    </platform>
+    <engine name="android" spec="~6.3.0" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
 </widget>
